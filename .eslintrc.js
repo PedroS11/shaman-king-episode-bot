@@ -19,5 +19,7 @@ module.exports = {
     "no-console": 0,
     "@typescript-eslint/no-unused-vars": 1,
     "no-prototype-builtins": 0,
+    "@typescript-eslint/no-var-requires": 0,
+    "@typescript-eslint/ban-ts-comment": 0
   },
 };
