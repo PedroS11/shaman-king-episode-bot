@@ -1,52 +1,70 @@
 require("dotenv").config();
+import { Episode } from "./domain/bot/episode";
 import axios, { AxiosError } from "axios";
 import cheerio from 'cheerio';
 import { Telegraf } from "telegraf";
 import { sendMessage } from "./utils/telegram/helpers";
+import { getLastEpisode, insertEpisode, updateEpisodeNotification } from "./db";
+import { createEpisodeUrl } from "./utils/createEpisodeUrl";
 
 // @ts-ignore
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
-let lastRow = {
-    episodeNumber: 39,
-    url: "http://watchshamanking.com/shaman-king-2021-episode-39-subbed",
-    notificationSent: false
-}
-
 bot.launch();
 
-const url: string = "http://watchshamanking.com/shaman-king-2021-episode-39-subbed";
-
 (async () => {
+    const lastEpisode: Episode = await getLastEpisode() as Episode;
+    let pollingEpisode: Episode = lastEpisode;
 
-    // Ir à BD, buscar o último elemento e ver se é menor que 52
+    // Move to the next episode
+    if (lastEpisode.rawSent && lastEpisode.subbedSent) {
+        const newEpisodeNr: number = lastEpisode.episode + 1;
 
-    // Se não tiver enviado notificacao, fazer polling para saber se já existe com legendas
+        if(newEpisodeNr >= 53) {
+            await sendMessage(bot, `The anime is complete, delete the bot`);
+            return;
+        }
 
-    // SE já tiver, poll do próximo
+        pollingEpisode = {
+            episode: newEpisodeNr,
+            subbedSent: false,
+            rawSent: false,
+            url: createEpisodeUrl(newEpisodeNr)
+        };
 
-    if(lastRow.notificationSent)
-
+        await insertEpisode(pollingEpisode);
+    }
 
     try {
-        const response = await axios(url);
+        const response = await axios(pollingEpisode.url);
         const html = response.data;
         const $ = cheerio.load(html);
 
-        const item = $('.entry-content p').text()
+        if (!pollingEpisode.rawSent) {
+            await sendMessage(bot, `The raw episode ${pollingEpisode.episode} is now available on ${pollingEpisode.url}`);
 
-        console.log(item)
-        //								<div class="entry-content" itemprop="text">
+            pollingEpisode.rawSent = true;
+            await updateEpisodeNotification(pollingEpisode);
+        }
+
+        const item: string = $('.entry-content').text();
+        const isSubbed: boolean = !item.includes("will be out when this countdown reaches 0:");
+
+        if(isSubbed && !pollingEpisode.subbedSent) {
+            await sendMessage(bot, `The subbed episode ${pollingEpisode.episode} is now available on ${pollingEpisode.url}`);
+
+            pollingEpisode.subbedSent = true;
+            await updateEpisodeNotification(pollingEpisode);
+        }
     } catch (e) {
         if (e?.response) {
             const error: AxiosError = e;
-            if(error?.response?.status === 404) {
-                console.log("Episódio não disponível")
+            if (error?.response?.status === 404) {
+                console.log(`Episode ${pollingEpisode.episode} not found`);
                 return
             }
         }
 
-        await sendMessage(bot,`Error calling ${url}, message ${e.message}`);
+        await sendMessage(bot, `Error calling ${pollingEpisode.url}, message ${e.message}`);
     }
-
-})()
+})();

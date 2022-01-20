@@ -1,5 +1,6 @@
-export interface Episode {
+export interface EpisodeDAL {
     episode: number,
     url: string,
-    sent: number
+    rawSent: number,
+    subbedSent: number
 }
