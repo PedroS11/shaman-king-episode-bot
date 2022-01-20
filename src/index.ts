@@ -6,13 +6,10 @@ import { Telegraf } from "telegraf";
 import { sendMessage } from "./utils/telegram/helpers";
 import { getLastEpisode, insertEpisode, updateEpisodeNotification } from "./db";
 import { createEpisodeUrl } from "./utils/createEpisodeUrl";
+import cron from 'node-cron';
 
-// @ts-ignore
-const bot = new Telegraf(process.env.BOT_TOKEN);
-
-bot.launch();
-
-(async () => {
+const pollEpisode = async () => {
+    console.log("---------Started polling execution---------")
     const lastEpisode: Episode = await getLastEpisode() as Episode;
     let pollingEpisode: Episode = lastEpisode;
 
@@ -35,6 +32,8 @@ bot.launch();
         await insertEpisode(pollingEpisode);
     }
 
+    console.log("Episode to poll", pollingEpisode);
+
     try {
         const response = await axios(pollingEpisode.url);
         const html = response.data;
@@ -47,6 +46,7 @@ bot.launch();
             await updateEpisodeNotification(pollingEpisode);
         }
 
+
         const item: string = $('.entry-content').text();
         const isSubbed: boolean = !item.includes("will be out when this countdown reaches 0:");
 
@@ -56,6 +56,10 @@ bot.launch();
             pollingEpisode.subbedSent = true;
             await updateEpisodeNotification(pollingEpisode);
         }
+        console.log(`Poll finished for episode ${pollingEpisode.episode}`, pollingEpisode);
+        console.log("-------------------------------------------")
+
+
     } catch (e) {
         if (e?.response) {
             const error: AxiosError = e;
@@ -67,4 +71,13 @@ bot.launch();
 
         await sendMessage(bot, `Error calling ${pollingEpisode.url}, message ${e.message}`);
     }
-})();
+}
+// @ts-ignore
+const bot = new Telegraf(process.env.BOT_TOKEN);
+
+bot.launch();
+
+cron.schedule('*/30 * * * 4-7', async () => {
+    // send the message here
+    await pollEpisode();
+});
