@@ -1,6 +1,6 @@
 # Shaman King Episode Bot
 
-This is a simple Telegram bot that polls a website for new [Shaman King 2021](https://en.wikipedia.org/wiki/Shaman_King_\(2021_TV_series\)) episodes. 
+This is a Telegram bot that polls a website for new [Shaman King 2021](https://en.wikipedia.org/wiki/Shaman_King_\(2021_TV_series\)) episodes. 
 
 Every time a raw and/or subbed episode is available, it sends a message with the information regarding the episode and its url.
 

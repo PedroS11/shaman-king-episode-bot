@@ -1,7 +1,7 @@
 {
   "name": "shaman-king-bot",
   "version": "1.0.0",
-  "description": "Telegram bot to get the most recent episode",
+  "description": "Telegram bot that polls a website for new Shaman King 2021 episodes",
   "main": "index.js",
   "scripts": {
     "dev": "nodemon src/index.ts",
@@ -18,8 +18,22 @@
       "eslint --fix"
     ]
   },
-  "author": "",
-  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PedroS11/shaman-king-episode-bot.git"
+  },
+  "keywords": [
+    "Telegram",
+    "bot",
+    "typescript",
+    "Shaman King"
+  ],
+  "author": "Pedro Silva",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/PedroS11/shaman-king-episode-bot/issues"
+  },
+  "homepage": "https://github.com/PedroS11/shaman-king-episode-bot#readme",
   "devDependencies": {
     "@types/better-sqlite3": "^7.4.2",
     "@types/node": "^17.0.9",
