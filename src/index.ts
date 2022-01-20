@@ -1,6 +1,5 @@
-import { getEnvironmentVariable } from "./utils/getEnvironmentVariable";
-
 require("dotenv").config();
+import { getEnvironmentVariable } from "./utils/getEnvironmentVariable";
 import { Episode } from "./domain/bot/episode";
 import axios, { AxiosError } from "axios";
 import cheerio from 'cheerio';
