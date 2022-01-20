@@ -57,10 +57,9 @@ const pollEpisode = async () => {
             pollingEpisode.subbedSent = true;
             await updateEpisodeNotification(pollingEpisode);
         }
+
         console.log(`Poll finished for episode ${pollingEpisode.episode}`, pollingEpisode);
         console.log("-------------------------------------------")
-
-
     } catch (e) {
         if (e?.response) {
             const error: AxiosError = e;
