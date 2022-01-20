@@ -1,3 +1,5 @@
+import { getEnvironmentVariable } from "./utils/getEnvironmentVariable";
+
 require("dotenv").config();
 import { Episode } from "./domain/bot/episode";
 import axios, { AxiosError } from "axios";
@@ -73,7 +75,7 @@ const pollEpisode = async () => {
     }
 }
 // @ts-ignore
-const bot = new Telegraf(process.env.BOT_TOKEN);
+const bot = new Telegraf(getEnvironmentVariable("BOT_TOKEN"));
 
 bot.launch();
 
