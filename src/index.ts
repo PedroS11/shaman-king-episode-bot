@@ -40,7 +40,10 @@ const pollEpisode = async () => {
         const html = response.data;
         const $ = cheerio.load(html);
 
-        if (!pollingEpisode.rawSent) {
+        const item: string = $(".entry-content").text();
+        const isRawAvailable = !item.includes("RAW will be out when this countdown reaches 0");
+
+        if (isRawAvailable && !pollingEpisode.rawSent) {
             await sendMessage(
                 bot,
                 `The raw episode ${pollingEpisode.episode} is now available on ${pollingEpisode.url}`,
@@ -50,10 +53,9 @@ const pollEpisode = async () => {
             await updateEpisodeNotification(pollingEpisode);
         }
 
-        const item: string = $(".entry-content").text();
-        const isSubbed = !item.includes("will be out when this countdown reaches 0:");
+        const isSubbedAvailable = !item.includes("SUBBED will be out when this countdown reaches 0");
 
-        if (isSubbed && !pollingEpisode.subbedSent) {
+        if (isSubbedAvailable && !pollingEpisode.subbedSent) {
             await sendMessage(
                 bot,
                 `The subbed episode ${pollingEpisode.episode} is now available on ${pollingEpisode.url}`,
