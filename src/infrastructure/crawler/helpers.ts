@@ -3,14 +3,11 @@ import { CheerioAPI, load } from "cheerio";
 
 export const getPage = async (url: string): Promise<CheerioAPI> => {
     const response = await axios(url);
-    const html = response.data;
-    return load(html);
+    return load(response.data.html);
 };
 
 export const parsePage = (page: CheerioAPI): string => {
-    return page("#episode_related > li:last-child .name")
-        .text()
-        .replace(/\s{2,}/g, " ");
+    return page(".episodes > li:last-child").text().trim();
 };
 
 export const getLastAvailableEpisode = async (url: string): Promise<string> => {

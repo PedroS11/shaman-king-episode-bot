@@ -2,13 +2,13 @@ import { AxiosError } from "axios";
 import { Telegram } from "telegraf";
 import { insertEpisode, updateEpisodeNotification } from "../../db";
 import { Episode } from "../../domain/bot/episode";
-import { createEpisodeUrl } from "../../utils/createEpisodeUrl";
 import { getEnvironmentVariable } from "../../utils/getEnvironmentVariable";
 import { getLastAvailableEpisode } from "../crawler/helpers";
 import { sendMessage } from "../telegram/helpers";
 import { getPollingEpisode } from "./helpers";
 
-const SHAMAN_KING_FLOWERS_URL = "https://ww4.gogoanime2.org/anime/shaman-king-2021";
+const SHAMAN_KING_FLOWERS_API = "https://ww2.9animes.org/ajax/film/servers?id=shaman-king-flowers";
+const SHAMAN_KING_FLOWERS_URL = "https://9animetv.to/watch/shaman-king-flowers-18826";
 const MAX_NUMBER_OF_EPISODES = 13;
 
 const bot = new Telegram(getEnvironmentVariable("BOT_TOKEN"));
@@ -21,7 +21,7 @@ export const pollEpisode = async () => {
     if (pollingEpisode.rawSent && pollingEpisode.subbedSent) {
         const newEpisodeNr: number = pollingEpisode.episode + 1;
 
-        if (newEpisodeNr >= MAX_NUMBER_OF_EPISODES) {
+        if (newEpisodeNr > MAX_NUMBER_OF_EPISODES) {
             await sendMessage(bot, `The anime is complete, delete the bot`);
             return;
         }
@@ -30,7 +30,7 @@ export const pollEpisode = async () => {
             episode: newEpisodeNr,
             subbedSent: false,
             rawSent: false,
-            url: createEpisodeUrl(newEpisodeNr),
+            url: SHAMAN_KING_FLOWERS_URL,
         };
 
         await insertEpisode(pollingEpisode);
@@ -39,15 +39,18 @@ export const pollEpisode = async () => {
     console.log("Episode to poll", pollingEpisode);
 
     try {
-        const lastAvailableEpisode: string = await getLastAvailableEpisode(SHAMAN_KING_FLOWERS_URL);
+        const lastAvailableEpisode: string = await getLastAvailableEpisode(SHAMAN_KING_FLOWERS_API);
 
         if (!lastAvailableEpisode) {
             return;
         }
 
         // If the new episode is available
-        if (lastAvailableEpisode.includes(pollingEpisode.episode.toString())) {
-            await sendMessage(bot, `The episode ${pollingEpisode.episode} is now available on ${pollingEpisode.url}`);
+        if (lastAvailableEpisode === pollingEpisode.episode.toString()) {
+            await sendMessage(
+                bot,
+                `The episode ${pollingEpisode.episode} is now available on ${SHAMAN_KING_FLOWERS_URL}`,
+            );
 
             pollingEpisode.rawSent = true;
             pollingEpisode.subbedSent = true;
@@ -60,10 +63,10 @@ export const pollEpisode = async () => {
         if (e?.response) {
             const error: AxiosError = e;
             if (error.response?.status === 404) {
-                console.log(`Page ${SHAMAN_KING_FLOWERS_URL} not found`);
+                console.log(`Page ${SHAMAN_KING_FLOWERS_API} not found`);
                 return;
             }
         }
-        await sendMessage(bot, `Error calling ${pollingEpisode.url}, message ${e.message}`);
+        await sendMessage(bot, `Error calling ${SHAMAN_KING_FLOWERS_API}, message ${e.message}`);
     }
 };
