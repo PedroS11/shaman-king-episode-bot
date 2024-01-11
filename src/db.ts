@@ -3,7 +3,7 @@ import sqlite3 from "sqlite3";
 import { open } from "sqlite";
 import { Episode } from "./domain/bot/episode";
 
-export const getLastEpisode = async (): Promise<Episode> => {
+export const getLastEpisode = async (): Promise<Episode | undefined> => {
     const db = await open({
         filename: "./data/database.db",
         driver: sqlite3.Database,
@@ -12,11 +12,15 @@ export const getLastEpisode = async (): Promise<Episode> => {
     const row = await db.get<EpisodeDAL>("SELECT * FROM Episode ORDER BY episode DESC LIMIT 1");
     await db.close();
 
+    if (!row) {
+        return;
+    }
+
     return {
-        episode: row!.episode,
-        rawSent: Boolean(row!.rawSent),
-        subbedSent: Boolean(row!.subbedSent),
-        url: row!.url,
+        episode: row.episode,
+        rawSent: Boolean(row.rawSent),
+        subbedSent: Boolean(row.subbedSent),
+        url: row.url,
     };
 };
 
