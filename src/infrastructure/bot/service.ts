@@ -1,14 +1,15 @@
 import { AxiosError } from "axios";
 import { Telegram } from "telegraf";
-import { insertEpisode, updateEpisodeNotification } from "../../db";
+import { insertEpisode, updateEpisode } from "../dabtabase/db";
 import { Episode } from "../../domain/bot/episode";
 import { getEnvironmentVariable } from "../../utils/getEnvironmentVariable";
 import { getLastAvailableEpisode } from "../crawler/helpers";
 import { sendMessage } from "../telegram/helpers";
 import { getPollingEpisode } from "./helpers";
+import { EpisodeCrawled } from "../../domain/crawler";
+import { createEpisodeUrl } from "../../utils/createEpisodeUrl";
 
-const SHAMAN_KING_FLOWERS_API = "https://ww2.9animes.org/ajax/film/servers?id=shaman-king-flowers";
-const SHAMAN_KING_FLOWERS_URL = "https://9animetv.to/watch/shaman-king-flowers-18826";
+const SHAMAN_KING_FLOWERS_API = "https://aniwatch.to/ajax/v2/episode/list/18826";
 const MAX_NUMBER_OF_EPISODES = 13;
 
 const bot = new Telegram(getEnvironmentVariable("BOT_TOKEN"));
@@ -18,7 +19,7 @@ export const pollEpisode = async () => {
     let pollingEpisode: Episode = await getPollingEpisode();
 
     // Move to the next episode if the last one was already notified
-    if (pollingEpisode.rawSent && pollingEpisode.subbedSent) {
+    if (pollingEpisode.notified) {
         const newEpisodeNr: number = pollingEpisode.episode + 1;
 
         if (newEpisodeNr > MAX_NUMBER_OF_EPISODES) {
@@ -28,9 +29,8 @@ export const pollEpisode = async () => {
 
         pollingEpisode = {
             episode: newEpisodeNr,
-            subbedSent: false,
-            rawSent: false,
-            url: SHAMAN_KING_FLOWERS_URL,
+            notified: false,
+            url: "",
         };
 
         await insertEpisode(pollingEpisode);
@@ -39,22 +39,21 @@ export const pollEpisode = async () => {
     console.log("Episode to poll", pollingEpisode);
 
     try {
-        const lastAvailableEpisode: string = await getLastAvailableEpisode(SHAMAN_KING_FLOWERS_API);
+        const lastAvailableEpisode: EpisodeCrawled = await getLastAvailableEpisode(SHAMAN_KING_FLOWERS_API);
 
-        if (!lastAvailableEpisode) {
-            return;
+        console.log(`Last avaialble episode `, lastAvailableEpisode);
+
+        if (!lastAvailableEpisode.title) {
+            throw new Error("Error crawling last episode from page");
         }
 
         // If the new episode is available
-        if (lastAvailableEpisode === pollingEpisode.episode.toString()) {
-            await sendMessage(
-                bot,
-                `The episode ${pollingEpisode.episode} is now available on ${SHAMAN_KING_FLOWERS_URL}`,
-            );
+        if (lastAvailableEpisode.nr === pollingEpisode.episode) {
+            pollingEpisode.url = createEpisodeUrl(lastAvailableEpisode.url);
+            pollingEpisode.notified = true;
 
-            pollingEpisode.rawSent = true;
-            pollingEpisode.subbedSent = true;
-            await updateEpisodeNotification(pollingEpisode);
+            await sendMessage(bot, `The episode ${pollingEpisode.episode} is now available on ${pollingEpisode.url}`);
+            await updateEpisode(pollingEpisode);
         }
 
         console.log(`Poll finished for episode ${pollingEpisode.episode}`, pollingEpisode);

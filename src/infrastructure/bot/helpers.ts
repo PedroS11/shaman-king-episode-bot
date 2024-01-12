@@ -1,6 +1,5 @@
-import { getLastEpisode, insertEpisode } from "../../db";
+import { getLastEpisode, insertEpisode } from "../dabtabase/db";
 import { Episode } from "../../domain/bot/episode";
-import { createEpisodeUrl } from "../../utils/createEpisodeUrl";
 
 export const getPollingEpisode = async (): Promise<Episode> => {
     let lastEpisode: Episode | undefined = await getLastEpisode();
@@ -8,9 +7,8 @@ export const getPollingEpisode = async (): Promise<Episode> => {
     if (lastEpisode === undefined) {
         lastEpisode = {
             episode: 1,
-            subbedSent: false,
-            rawSent: false,
-            url: createEpisodeUrl(1),
+            notified: false,
+            url: "",
         };
 
         await insertEpisode(lastEpisode);
