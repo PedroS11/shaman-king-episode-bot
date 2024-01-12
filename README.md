@@ -1,8 +1,8 @@
 # Shaman King Episode Bot
 
-This is a Telegram bot that polls a website for new [Shaman King 2021](https://en.wikipedia.org/wiki/Shaman_King_\(2021_TV_series\)) episodes. 
+This is a Telegram bot that polls a website for new [Shaman King Flowers](https://en.wikipedia.org/wiki/Shaman_King:_Flowers) episodes. 
 
-Every time a raw and/or subbed episode is available, it sends a message with the information regarding the episode and its url.
+Every time a new episode is available, it sends a message with the information regarding the episode and its url.
 
 ![Shaman King bot messages](/assets/images/messages.png "Shaman King bot messages")
 
@@ -20,7 +20,7 @@ Every time a raw and/or subbed episode is available, it sends a message with the
  - Save the token provided by the @BotFather
  
  ### Step 2 - Get chat ID
-- Add bot to the group
+- Add bot to the Channel
 - Get the list of updates for your BOT
 
 ```sh
@@ -37,11 +37,26 @@ On the root of the project, create a .env with
 ```
 BOT_TOKEN=<YOUR TOKEN>
 CHAT_ID=<YOUR CHAT ID>
+POSTGRES_PASSWORD=root
+POSTGRES_USER=root
+POSTGRES_DB=shaman_king
+POSTGRES_HOST=localhost
 ```
 
-### Step 4 - Run the bot locally
+### Step 4 - Run the bot locally with docker DB
+
+ Comment the the service `shaman-king-bot` so that only the `postgres` and `pgadmin` are uncommented
+
+> `mkdir data`  <-- The folder where the databse volume will be mounted
+
+> `docker-compose build && docker-compose up -d`
 
 > ```npm run dev``` or ``yarn dev``
+
+### Step 4 - Run the bot and DB with docker
+> `mkdir data`  <-- The folder where the databse volume will be mounted
+
+> `docker-compose build && docker-compose up -d`
 
 
 ## Build
@@ -49,6 +64,20 @@ The transpiled files are created inside the dist folder. This name is defined on
 
 #### Build code
 > ```npm run build``` or ``yarn build``
+
+## Docker
+
+The bot was built using Docker so it doesn't depende on external services. It includes a PostgreSQL dabatase and the PgAdmin dashboard so you can manage your data
+In order to do it:
+- Access `localhost:5050` and insert the credentials specified on the `docker-compose.yml`
+
+- On the servers, add a new one with the desired name, for the host use `host.docker.internal` and put the credentials like on the .env file
+
+
+## Notes
+### Install docker-compose on an unix system so that it supports docker-compose version: "3.9"
+
+For the docker-compose be able to run, follow these steps https://stackoverflow.com/a/74119920/9661304
 
 ## License 
 
