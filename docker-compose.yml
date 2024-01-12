@@ -23,7 +23,7 @@ services:
       - ./db/schema.sql:/docker-entrypoint-initdb.d/schema.sql # when the db is created, the file inside "docker-entrypoint-initdb.d" is executed
     env_file: .env
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: [ "CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}" ]
       interval: 10s
       timeout: 5s
       retries: 5
