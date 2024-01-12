@@ -8,6 +8,7 @@ import { sendMessage } from "../telegram/helpers";
 import { getPollingEpisode } from "./helpers";
 import { EpisodeCrawled } from "../../domain/crawler";
 import { createEpisodeUrl } from "../../utils/createEpisodeUrl";
+import { Logger } from "../../utils/logger";
 
 const SHAMAN_KING_FLOWERS_API = "https://aniwatch.to/ajax/v2/episode/list/18826";
 const MAX_NUMBER_OF_EPISODES = 13;
@@ -15,7 +16,7 @@ const MAX_NUMBER_OF_EPISODES = 13;
 const bot = new Telegram(getEnvironmentVariable("BOT_TOKEN"));
 
 export const pollEpisode = async () => {
-    console.log("---------Started polling execution---------");
+    Logger.info("---------Started polling execution---------");
     let pollingEpisode: Episode = await getPollingEpisode();
 
     // Move to the next episode if the last one was already notified
@@ -36,12 +37,12 @@ export const pollEpisode = async () => {
         await insertEpisode(pollingEpisode);
     }
 
-    console.log("Episode to poll", pollingEpisode);
+    Logger.info(pollingEpisode, "Episode to poll");
 
     try {
         const lastAvailableEpisode: EpisodeCrawled = await getLastAvailableEpisode(SHAMAN_KING_FLOWERS_API);
 
-        console.log(`Last avaialble episode `, lastAvailableEpisode);
+        Logger.info(lastAvailableEpisode, `Last avaialble episode `);
 
         if (!lastAvailableEpisode.title) {
             throw new Error("Error crawling last episode from page");
@@ -59,13 +60,13 @@ export const pollEpisode = async () => {
             await updateEpisode(pollingEpisode);
         }
 
-        console.log(`Poll finished for episode ${pollingEpisode.episode}`, pollingEpisode);
-        console.log("-------------------------------------------");
+        Logger.info(pollingEpisode, `Poll finished for episode ${pollingEpisode.episode}`);
+        Logger.info("-------------------------------------------");
     } catch (e) {
         if (e?.response) {
             const error: AxiosError = e;
             if (error.response?.status === 404) {
-                console.log(`Page ${SHAMAN_KING_FLOWERS_API} not found`);
+                Logger.error(`Page ${SHAMAN_KING_FLOWERS_API} not found`);
                 return;
             }
         }
