@@ -52,7 +52,10 @@ export const pollEpisode = async () => {
             pollingEpisode.url = createEpisodeUrl(lastAvailableEpisode.url);
             pollingEpisode.notified = true;
 
-            await sendMessage(bot, `The episode ${pollingEpisode.episode} is now available on ${pollingEpisode.url}`);
+            await sendMessage(
+                bot,
+                `The episode ${pollingEpisode.episode} "${lastAvailableEpisode.title}" is now available on ${pollingEpisode.url}`,
+            );
             await updateEpisode(pollingEpisode);
         }
 

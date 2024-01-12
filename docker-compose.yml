@@ -7,7 +7,7 @@ services:
       context: . # Dockerfile folder
       dockerfile: Dockerfile
     env_file: .env 
-    # on locally, use localhost as Host, inside the container replace with postgres as it's the service name
+    # if running locally pointing to the database from docker-compose, use localhost as Host; if running all services, override the host with "postgres" as it's the service name
     environment:
       - POSTGRES_HOST=postgres
     depends_on:
