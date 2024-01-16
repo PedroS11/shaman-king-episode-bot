@@ -1,66 +1,41 @@
 import { AxiosError } from "axios";
 import { Telegram } from "telegraf";
-import { insertEpisode, updateEpisode } from "../dabtabase/db";
+import { saveEpisode } from "../dabtabase/db";
 import { Episode } from "../../domain/bot/episode";
-import { getEnvironmentVariable } from "../../utils/getEnvironmentVariable";
-import { getLastAvailableEpisode } from "../crawler/helpers";
+import { getLastReleasedEpisode } from "../crawler/helpers";
 import { sendMessage } from "../telegram/helpers";
-import { getPollingEpisode } from "./helpers";
+import { getBot, getPollingEpisode } from "./helpers";
 import { EpisodeCrawled } from "../../domain/crawler";
-import { createEpisodeUrl } from "../../utils/createEpisodeUrl";
 import { Logger } from "../../utils/logger";
+import { SHAMAN_KING_FLOWERS_API } from "../../config";
 
-const SHAMAN_KING_FLOWERS_API = "https://aniwatch.to/ajax/v2/episode/list/18826";
-const MAX_NUMBER_OF_EPISODES = 13;
-
-const bot = new Telegram(getEnvironmentVariable("BOT_TOKEN"));
+const bot: Telegram = getBot();
 
 export const pollEpisode = async () => {
     Logger.info("---------Started polling execution---------");
-    let pollingEpisode: Episode = await getPollingEpisode();
-
-    // Move to the next episode if the last one was already notified
-    if (pollingEpisode.notified) {
-        const newEpisodeNr: number = pollingEpisode.episode + 1;
-
-        if (newEpisodeNr > MAX_NUMBER_OF_EPISODES) {
-            await sendMessage(bot, `The anime is complete, delete the bot`);
-            return;
-        }
-
-        pollingEpisode = {
-            episode: newEpisodeNr,
-            notified: false,
-            url: "",
-        };
-
-        await insertEpisode(pollingEpisode);
-    }
+    const pollingEpisode: Episode = await getPollingEpisode();
 
     Logger.info(pollingEpisode, "Episode to poll");
 
     try {
-        const lastAvailableEpisode: EpisodeCrawled = await getLastAvailableEpisode(SHAMAN_KING_FLOWERS_API);
+        const lastReleasedEpisode: EpisodeCrawled = await getLastReleasedEpisode(SHAMAN_KING_FLOWERS_API);
 
-        Logger.info(lastAvailableEpisode, `Last avaialble episode `);
-
-        if (!lastAvailableEpisode.title) {
-            throw new Error("Error crawling last episode from page");
-        }
+        Logger.info(lastReleasedEpisode, `Last avaialble episode `);
 
         // If the new episode is available
-        if (lastAvailableEpisode.nr === pollingEpisode.episode) {
-            pollingEpisode.url = createEpisodeUrl(lastAvailableEpisode.url);
-            pollingEpisode.notified = true;
-
+        if (lastReleasedEpisode.nr === pollingEpisode.id) {
             await sendMessage(
                 bot,
-                `The episode ${pollingEpisode.episode} "${lastAvailableEpisode.title}" is now available on ${pollingEpisode.url}`,
+                `The episode ${pollingEpisode.id} "${lastReleasedEpisode.title}" is now available on ${lastReleasedEpisode.url}`,
             );
-            await updateEpisode(pollingEpisode);
+
+            pollingEpisode.url = lastReleasedEpisode.url;
+            pollingEpisode.notified = true;
+            pollingEpisode.title = lastReleasedEpisode.title;
+            await saveEpisode(pollingEpisode);
         }
 
-        Logger.info(pollingEpisode, `Poll finished for episode ${pollingEpisode.episode}`);
+        Logger.info(pollingEpisode, `Poll finished for episode ${pollingEpisode.id}`);
         Logger.info("-------------------------------------------");
     } catch (e) {
         if (e?.response) {

@@ -1,6 +1,7 @@
 import axios from "axios";
-import { CheerioAPI, load } from "cheerio";
+import { Cheerio, CheerioAPI, Element, load } from "cheerio";
 import { EpisodeCrawled } from "../../domain/crawler";
+import { createEpisodeUrl } from "../../utils/createEpisodeUrl";
 
 export const getPage = async (url: string): Promise<CheerioAPI> => {
     const response = await axios(url);
@@ -8,15 +9,24 @@ export const getPage = async (url: string): Promise<CheerioAPI> => {
 };
 
 export const parsePage = (page: CheerioAPI): EpisodeCrawled => {
-    const episodeAnchor = page(".ss-list > a:last-child");
+    const episodeAnchor: Cheerio<Element> = page(".ss-list > a:last-child");
+
+    const episodePath: string = episodeAnchor.attr("href")?.trim() ?? "";
+    const episodeNumber: number = episodeAnchor.data("number") as number;
+    const episodeTitle: string = episodeAnchor.children(".ssli-detail").children(".ep-name").text() ?? "";
+
+    if (!episodePath || !Number.isInteger(episodeNumber) || !episodeTitle) {
+        throw new Error("Error crawling last episode from page");
+    }
+
     return {
-        nr: episodeAnchor.data("number") as number,
-        title: episodeAnchor.children(".ssli-detail").children(".ep-name").text() ?? "",
-        url: episodeAnchor.attr("href")?.trim() ?? "",
+        nr: episodeNumber,
+        title: episodeTitle,
+        url: createEpisodeUrl(episodePath),
     };
 };
 
-export const getLastAvailableEpisode = async (url: string): Promise<EpisodeCrawled> => {
+export const getLastReleasedEpisode = async (url: string): Promise<EpisodeCrawled> => {
     const page: CheerioAPI = await getPage(url);
     return parsePage(page);
 };

@@ -1,40 +1,34 @@
-import { EpisodeDAL } from "../../domain/database/tables";
 import { Episode } from "../../domain/bot/episode";
-import { Pool } from "pg";
-import { getEnvironmentVariable } from "../../utils/getEnvironmentVariable";
+import { EpisodeDAL } from "../../domain/database/entity/Episode";
+import { EpisodeRepository } from "./dataSource";
 
-const pool = new Pool({
-    password: getEnvironmentVariable("POSTGRES_PASSWORD"),
-    user: getEnvironmentVariable("POSTGRES_USER"),
-    host: getEnvironmentVariable("POSTGRES_HOST"),
-    database: getEnvironmentVariable("POSTGRES_DB"),
-    port: 5432,
-    max: 20, // Maximum number of clients in the pool
-    idleTimeoutMillis: 30000, // How long a client is allowed to remain idle before being closed
-});
+export const getLastEpisode = async (): Promise<Episode> => {
+    let lastEpisode = await EpisodeRepository.createQueryBuilder("lastEpisode").orderBy("id", "DESC").limit(1).getOne();
 
-export const getLastEpisode = async (): Promise<Episode | undefined> => {
-    const { rowCount, rows } = await pool.query<EpisodeDAL>("SELECT * FROM Episode ORDER BY episode DESC LIMIT 1");
+    // If there's no episode on the database, add the first one
+    if (lastEpisode === null) {
+        lastEpisode = new EpisodeDAL();
+        lastEpisode.id = 1;
+        lastEpisode.notified = false;
+        lastEpisode.url = "";
+        lastEpisode.title = "";
 
-    if (rowCount === 0) {
-        return;
+        await EpisodeRepository.save(lastEpisode);
     }
 
     return {
-        episode: rows[0].episode,
-        notified: Boolean(rows[0].notified),
-        url: rows[0].url,
+        id: lastEpisode.id,
+        notified: lastEpisode.notified,
+        url: lastEpisode.url,
+        title: lastEpisode.title,
     };
 };
 
-export const insertEpisode = async (data: Episode): Promise<void> => {
-    await pool.query("INSERT INTO Episode VALUES ($1, $2, $3)", [data.episode, data.url, Number(data.notified)]);
-};
-
-export const updateEpisode = async (data: Episode): Promise<void> => {
-    await pool.query("UPDATE Episode SET notified = $1, url = $2 WHERE episode = $3", [
-        Number(data.notified),
-        data.url,
-        data.episode,
-    ]);
+export const saveEpisode = async (data: Episode): Promise<void> => {
+    const episode = new EpisodeDAL();
+    episode.id = data.id;
+    episode.notified = data.notified;
+    episode.url = data.url;
+    episode.title = data.title;
+    await EpisodeRepository.save(episode);
 };

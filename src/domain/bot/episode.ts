@@ -1,5 +1,6 @@
 export interface Episode {
-    episode: number;
+    id: number;
     url: string;
     notified: boolean;
+    title: string;
 }

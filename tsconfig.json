@@ -12,6 +12,10 @@
     "outDir": "dist",
     "useUnknownInCatchVariables": false,
     "noImplicitAny": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "strictPropertyInitialization": false,
+
   }
 }
