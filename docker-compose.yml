@@ -1,18 +1,18 @@
 version: "3.9"
 
 services:
-  shaman-king-bot:
-    container_name: shaman-king-bot
-    build:
-      context: . # Dockerfile folder
-      dockerfile: Dockerfile
-    env_file: .env 
-    # if running locally pointing to the database from docker-compose, use localhost as Host; if running all services, override the host with "postgres" as it's the service name
-    environment:
-      - POSTGRES_HOST=postgres
-    depends_on:
-      postgres:
-        condition: service_healthy
+  # shaman-king-bot:
+  #   container_name: shaman-king-bot
+  #   build:
+  #     context: . # Dockerfile folder
+  #     dockerfile: Dockerfile
+  #   env_file: .env 
+  #   # if running locally pointing to the database from docker-compose, use localhost as Host; if running all services, override the host with "postgres" as it's the service name
+  #   environment:
+  #     - POSTGRES_HOST=postgres
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
 
   postgres:
     image: postgres:14-alpine
@@ -28,17 +28,17 @@ services:
       timeout: 5s
       retries: 5
 
-  # pgadmin:
-  #   image: dpage/pgadmin4
-  #   environment:
-  #     - PGADMIN_DEFAULT_EMAIL=admin@admin.com
-  #     - PGADMIN_DEFAULT_PASSWORD=adminadmin
-  #   ports:
-  #     - "5050:80"
-  #   restart: always
-  #   depends_on:
-  #     postgres:
-  #       condition: service_healthy
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=adminadmin
+    ports:
+      - "5050:80"
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
 
 
 volumes:

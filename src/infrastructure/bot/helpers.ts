@@ -1,4 +1,4 @@
-import { getLastEpisode, saveEpisode } from "../dabtabase/db";
+import { getLastEpisode, saveEpisode } from "../database/service";
 import { Episode } from "../../domain/bot/episode";
 import { getEnvironmentVariable } from "../../utils/getEnvironmentVariable";
 import { Telegram } from "telegraf";

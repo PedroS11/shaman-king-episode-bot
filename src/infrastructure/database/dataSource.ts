@@ -1,4 +1,5 @@
-import { EpisodeDAL } from "../../domain/database/entity/Episode";
+import "dotenv/config";
+import { EpisodeDAL } from "./entity/Episode";
 import { DataSource } from "typeorm";
 import { getEnvironmentVariable } from "../../utils/getEnvironmentVariable";
 
@@ -9,11 +10,12 @@ export const AppDataSource = new DataSource({
     username: getEnvironmentVariable("POSTGRES_USER"),
     password: getEnvironmentVariable("POSTGRES_PASSWORD"),
     database: getEnvironmentVariable("POSTGRES_DB"),
-    synchronize: true,
+    synchronize: false,
     logging: false,
+    migrationsRun: true,
     entities: [EpisodeDAL],
     subscribers: [],
-    migrations: [],
+    migrations: ["src/infrastructure/database/migrations/*.ts"],
 });
 
 export const EpisodeRepository = AppDataSource.getRepository(EpisodeDAL);

@@ -1,6 +1,6 @@
 import { AxiosError } from "axios";
 import { Telegram } from "telegraf";
-import { saveEpisode } from "../dabtabase/db";
+import { saveEpisode } from "../database/service";
 import { Episode } from "../../domain/bot/episode";
 import { getLastReleasedEpisode } from "../crawler/helpers";
 import { sendMessage } from "../telegram/helpers";

@@ -1,5 +1,5 @@
 import { Episode } from "../../domain/bot/episode";
-import { EpisodeDAL } from "../../domain/database/entity/Episode";
+import { EpisodeDAL } from "./entity/Episode";
 import { EpisodeRepository } from "./dataSource";
 
 export const getLastEpisode = async (): Promise<Episode> => {

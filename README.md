@@ -58,6 +58,12 @@ POSTGRES_HOST=localhost
 
 > `docker-compose build && docker-compose up -d`
 
+## Migrations
+### Create migration
+
+Create a new entity on src/infrastructure/entity
+
+` yarn migrate:generate src/infrastructure/database/migration/<migration name>`
 
 ## Build
 The transpiled files are created inside the dist folder. This name is defined on tsconfig.json file and to renamed it you need to change the compilerOptions.outDir property.

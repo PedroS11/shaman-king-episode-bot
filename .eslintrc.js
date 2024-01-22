@@ -1,6 +1,6 @@
 module.exports = {
     parserOptions: {
-        ecmaVersion: 2018,
+        ecmaVersion: 2022,
         sourceType: "module",
         ecmaFeatures: {
             impliedStrict: true,
@@ -9,9 +9,7 @@ module.exports = {
     parser: "@typescript-eslint/parser",
     env: {
         node: true,
-        es6: true,
-        jest: true,
-        mocha: true,
+        es2022: true,
     },
     plugins: ["@typescript-eslint", "unused-imports"],
     extends: ["eslint:recommended", "plugin:@typescript-eslint/recommended", "plugin:prettier/recommended"],
@@ -24,7 +22,12 @@ module.exports = {
         "unused-imports/no-unused-imports": "error",
         "unused-imports/no-unused-vars": [
             "warn",
-            { vars: "all", varsIgnorePattern: "^_", args: "after-used", argsIgnorePattern: "^_" },
+            {
+                vars: "all",
+                varsIgnorePattern: "^_",
+                args: "after-used",
+                argsIgnorePattern: "^_",
+            },
         ],
     },
 };
