@@ -1,14 +1,15 @@
 import "dotenv/config";
-import { pollEpisode } from "./infrastructure/bot/service";
+import { scheduleJob } from "node-schedule";
 import { AppDataSource } from "./infrastructure/database/dataSource";
+import { pollEpisode } from "./infrastructure/bot/service";
 
-// schedule("0 */6 * * *", async () => {
-//     await AppDataSource.initialize();
-
-//     await pollEpisode();
-// });
-
-(async () => {
+scheduleJob("0 */6 * * *", async () => {
     await AppDataSource.initialize();
+
     await pollEpisode();
-})();
+});
+
+// (async () => {
+//     await AppDataSource.initialize();
+//     await pollEpisode();
+// })();
