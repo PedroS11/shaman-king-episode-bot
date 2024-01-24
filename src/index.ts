@@ -1,10 +1,15 @@
 import "dotenv/config";
 import { scheduleJob } from "node-schedule";
-import { AppDataSource } from "./infrastructure/database/dataSource";
 import { pollEpisode } from "./infrastructure/bot/service";
+import { AppDataSource } from "./infrastructure/database/dataSource";
+import { getEnvironmentVariable } from "./utils/getEnvironmentVariable";
 
-scheduleJob("0 */6 * * *", async () => {
-    await AppDataSource.initialize();
+const cronPattern: string = getEnvironmentVariable("CRON_PATTERN");
+
+scheduleJob(cronPattern, async () => {
+    if (!AppDataSource.isInitialized) {
+        await AppDataSource.initialize();
+    }
 
     await pollEpisode();
 });
