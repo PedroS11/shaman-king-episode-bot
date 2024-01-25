@@ -22,6 +22,7 @@ export const getPollingEpisode = async (): Promise<Episode> => {
             notified: false,
             url: "",
             title: "",
+            season: 1,
         };
 
         await saveEpisode(lastEpisode);

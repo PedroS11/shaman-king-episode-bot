@@ -1,19 +1,19 @@
 version: "3.9"
 
 services:
-  shaman-king-bot:
-     container_name: shaman-king-bot
-     build:
-       context: . # Dockerfile folder
-       dockerfile: Dockerfile
-     image: "shaman-king-bot:node"
-     env_file: .env
-     # if running locally pointing to the database from docker-compose, use localhost as Host; if running all services, override the host with "postgres" as it's the service name
-     environment:
-       - POSTGRES_HOST=postgres
-     depends_on:
-       postgres:
-         condition: service_healthy
+#  shaman-king-bot:
+#     container_name: shaman-king-bot
+#     build:
+#       context: . # Dockerfile folder
+#       dockerfile: Dockerfile
+#     image: "shaman-king-bot:node"
+#     env_file: .env
+#     # if running locally pointing to the database from docker-compose, use localhost as Host; if running all services, override the host with "postgres" as it's the service name
+#     environment:
+#       - POSTGRES_HOST=postgres
+#     depends_on:
+#       postgres:
+#         condition: service_healthy
 
   postgres:
     container_name: postgres-db

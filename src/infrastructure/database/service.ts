@@ -21,6 +21,7 @@ export const getLastEpisode = async (): Promise<Episode> => {
         notified: lastEpisode.notified,
         url: lastEpisode.url,
         title: lastEpisode.title,
+        season: lastEpisode.season,
     };
 };
 
