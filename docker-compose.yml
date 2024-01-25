@@ -6,6 +6,7 @@ services:
      build:
        context: . # Dockerfile folder
        dockerfile: Dockerfile
+     image: "shaman-king-bot:node"
      env_file: .env
      # if running locally pointing to the database from docker-compose, use localhost as Host; if running all services, override the host with "postgres" as it's the service name
      environment:
