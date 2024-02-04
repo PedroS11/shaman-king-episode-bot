@@ -3,12 +3,12 @@ import { Cheerio, CheerioAPI, Element, load } from "cheerio";
 import { EpisodeCrawled } from "../../domain/crawler";
 import { createEpisodeUrl } from "../../utils/createEpisodeUrl";
 
-export const getPage = async (url: string): Promise<CheerioAPI> => {
+const getPage = async (url: string): Promise<CheerioAPI> => {
 	const response = await axios(url);
 	return load(response.data.html);
 };
 
-export const parsePage = (page: CheerioAPI): EpisodeCrawled => {
+const parsePage = (page: CheerioAPI): EpisodeCrawled => {
 	const episodeAnchor: Cheerio<Element> = page(".ss-list > a:last-child");
 
 	const episodePath: string = episodeAnchor.attr("href")?.trim() ?? "";
