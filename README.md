@@ -4,7 +4,7 @@ This is a Telegram bot that polls a website for new [Shaman King Flowers](https:
 
 Every time a new episode is available, it sends a message with the information regarding the episode and its url.
 
-![Shaman King bot messages](/assets/images/messages.png "Shaman King bot messages")
+<img src="assets/images/messages.png" alt="Message on the channel" style="height: 400px">
 
 ## Disclaimer
 
@@ -41,11 +41,12 @@ POSTGRES_PASSWORD=root
 POSTGRES_USER=root
 POSTGRES_DB=shaman_king
 POSTGRES_HOST=localhost
+CRON_PATTERN=0 */6 * * *
 ```
 
 ### Step 4 - Run the bot locally with docker DB
 
- Comment the the service `shaman-king-bot` so that only the `postgres` and `pgadmin` are uncommented
+ Comment the service `shaman-king-bot` so that only the `postgres` and `pgadmin` are uncommented
 
 > `mkdir data`  <-- The folder where the databse volume will be mounted
 
