@@ -1,6 +1,7 @@
 export interface Episode {
-    episode: number,
-    url: string,
-    rawSent: boolean,
-    subbedSent: boolean
+	id: number;
+	url: string;
+	season: number;
+	notified: boolean;
+	title: string;
 }

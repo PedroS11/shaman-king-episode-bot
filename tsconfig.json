@@ -2,17 +2,20 @@
   "compilerOptions": {
     "module": "commonjs",
     "esModuleInterop": true,
-    "target": "es2019",
+    "target": "es2022",
     "moduleResolution": "node",
     "strict": true,
     "sourceMap": true,
-    "lib": ["es2021"],
+    "lib": ["ES2022"],
     "skipLibCheck": true,
     "rootDir": "src",
     "outDir": "dist",
     "useUnknownInCatchVariables": false,
     "noImplicitAny": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "strictPropertyInitialization": false,
 
   }
 }

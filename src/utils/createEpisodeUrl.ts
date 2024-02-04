@@ -1,1 +1,1 @@
-export const createEpisodeUrl = (episode: number) => `http://watchshamanking.com/shaman-king-2021-episode-${episode}-subbed`;
+export const createEpisodeUrl = (path: string) => `https://aniwatch.to${path}`;

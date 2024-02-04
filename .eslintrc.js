@@ -1,25 +1,29 @@
 module.exports = {
-  parserOptions: {
-    ecmaVersion: 2018,
-    sourceType: "module",
-    ecmaFeatures: {
-      impliedStrict: true,
-    },
-  },
-  parser: "@typescript-eslint/parser",
-  env: {
-    node: true,
-    es6: true,
-    jest: true,
-    mocha: true,
-  },
-  plugins: ["@typescript-eslint"],
-  extends: ["eslint:recommended", "plugin:@typescript-eslint/recommended", "plugin:prettier/recommended"],
-  rules: {
-    "no-console": 0,
-    "@typescript-eslint/no-unused-vars": 1,
-    "no-prototype-builtins": 0,
-    "@typescript-eslint/no-var-requires": 0,
-    "@typescript-eslint/ban-ts-comment": 0
-  },
+	env: {
+		browser: true,
+		es2022: true,
+	},
+	extends: [
+		"eslint:recommended",
+		"plugin:@typescript-eslint/recommended",
+		"plugin:prettier/recommended",
+	],
+	overrides: [
+		{
+			env: {
+				node: true,
+			},
+			files: [".eslintrc.{js,cjs}"],
+			parserOptions: {
+				sourceType: "script",
+			},
+		},
+	],
+	parser: "@typescript-eslint/parser",
+	parserOptions: {
+		ecmaVersion: 2022,
+		sourceType: "module",
+	},
+	plugins: ["@typescript-eslint"],
+	rules: {},
 };
