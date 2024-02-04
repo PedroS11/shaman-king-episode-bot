@@ -7,28 +7,28 @@ import { MAX_NUMBER_OF_EPISODES } from "../../config";
 const bot = new Telegram(getEnvironmentVariable("BOT_TOKEN"));
 
 export const getPollingEpisode = async (): Promise<Episode> => {
-    let lastEpisode: Episode = await getLastEpisode();
+	let lastEpisode: Episode = await getLastEpisode();
 
-    // Move to the next episode if the last one was already notified
-    if (lastEpisode.notified) {
-        const newId: number = lastEpisode.id + 1;
+	// Move to the next episode if the last one was already notified
+	if (lastEpisode.notified) {
+		const newId: number = lastEpisode.id + 1;
 
-        if (newId > MAX_NUMBER_OF_EPISODES) {
-            throw new Error(`The anime is complete, delete the bot`);
-        }
+		if (newId > MAX_NUMBER_OF_EPISODES) {
+			throw new Error(`The anime is complete, delete the bot`);
+		}
 
-        lastEpisode = {
-            id: newId,
-            notified: false,
-            url: "",
-            title: "",
-            season: 1,
-        };
+		lastEpisode = {
+			id: newId,
+			notified: false,
+			url: "",
+			title: "",
+			season: 1,
+		};
 
-        await saveEpisode(lastEpisode);
-    }
+		await saveEpisode(lastEpisode);
+	}
 
-    return lastEpisode;
+	return lastEpisode;
 };
 
 export const getBot = (): Telegram => bot;

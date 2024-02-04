@@ -12,39 +12,48 @@ import { SHAMAN_KING_FLOWERS_API } from "../../config";
 const bot: Telegram = getBot();
 
 export const pollEpisode = async () => {
-    Logger.info("---------Started polling execution---------");
-    const pollingEpisode: Episode = await getPollingEpisode();
+	Logger.info("---------Started polling execution---------");
 
-    Logger.info(pollingEpisode, "Episode to poll");
+	const pollingEpisode: Episode = await getPollingEpisode();
 
-    try {
-        const lastReleasedEpisode: EpisodeCrawled = await getLastReleasedEpisode(SHAMAN_KING_FLOWERS_API);
+	Logger.info(pollingEpisode, "Episode to poll");
 
-        Logger.info(lastReleasedEpisode, `Last avaialble episode `);
+	try {
+		const lastReleasedEpisode: EpisodeCrawled = await getLastReleasedEpisode(
+			SHAMAN_KING_FLOWERS_API,
+		);
 
-        // If the new episode is available
-        if (lastReleasedEpisode.nr === pollingEpisode.id) {
-            await sendMessage(
-                bot,
-                `The episode ${pollingEpisode.id} "${lastReleasedEpisode.title}" is now available on ${lastReleasedEpisode.url}`,
-            );
+		Logger.info(lastReleasedEpisode, "Last avaialble episode ");
 
-            pollingEpisode.url = lastReleasedEpisode.url;
-            pollingEpisode.notified = true;
-            pollingEpisode.title = lastReleasedEpisode.title;
-            await saveEpisode(pollingEpisode);
-        }
+		// If the new episode is available
+		if (lastReleasedEpisode.nr === pollingEpisode.id) {
+			await sendMessage(
+				bot,
+				`The episode ${pollingEpisode.id} "${lastReleasedEpisode.title}" is now available on ${lastReleasedEpisode.url}`,
+			);
 
-        Logger.info(pollingEpisode, `Poll finished for episode ${pollingEpisode.id}`);
-        Logger.info("-------------------------------------------");
-    } catch (e) {
-        if (e?.response) {
-            const error: AxiosError = e;
-            if (error.response?.status === 404) {
-                Logger.error(`Page ${SHAMAN_KING_FLOWERS_API} not found`);
-                return;
-            }
-        }
-        await sendMessage(bot, `Error calling ${SHAMAN_KING_FLOWERS_API}, message ${e.message}`);
-    }
+			pollingEpisode.url = lastReleasedEpisode.url;
+			pollingEpisode.notified = true;
+			pollingEpisode.title = lastReleasedEpisode.title;
+			await saveEpisode(pollingEpisode);
+		}
+
+		Logger.info(
+			pollingEpisode,
+			`Poll finished for episode ${pollingEpisode.id}`,
+		);
+		Logger.info("-------------------------------------------");
+	} catch (e) {
+		if (e?.response) {
+			const error: AxiosError = e;
+			if (error.response?.status === 404) {
+				Logger.error(`Page ${SHAMAN_KING_FLOWERS_API} not found`);
+				return;
+			}
+		}
+		await sendMessage(
+			bot,
+			`Error calling ${SHAMAN_KING_FLOWERS_API}, message ${e.message}`,
+		);
+	}
 };
