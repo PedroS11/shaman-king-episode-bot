@@ -1,1 +1,1 @@
-export const createEpisodeUrl = (path: string) => `https://aniwatch.to${path}`;
+export const createEpisodeUrl = (path: string) => `https://hianime.to${path}`;
