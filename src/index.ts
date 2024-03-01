@@ -1,4 +1,5 @@
 import "dotenv/config";
+import "reflect-metadata";
 import { pollEpisode } from "./infrastructure/bot/service";
 import { AppDataSource } from "./infrastructure/database/dataSource";
 import { getEnvironmentVariable } from "./utils/getEnvironmentVariable";
