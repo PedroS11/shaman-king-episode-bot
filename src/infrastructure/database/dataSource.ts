@@ -3,6 +3,8 @@ import { EpisodeDAL } from "./entity/Episode";
 import { DataSource } from "typeorm";
 import { getEnvironmentVariable } from "../../utils/getEnvironmentVariable";
 
+const basePath = process.env.NODE_ENV === "production" ? "dist" : "src";
+
 export const AppDataSource = new DataSource({
 	type: "postgres",
 	host: getEnvironmentVariable("POSTGRES_HOST"),
@@ -13,9 +15,9 @@ export const AppDataSource = new DataSource({
 	synchronize: false,
 	logging: false,
 	migrationsRun: true,
-	entities: [EpisodeDAL],
 	subscribers: [],
-	migrations: ["src/infrastructure/database/migrations/*.ts"],
+	migrations: [basePath + "/infrastructure/database/migrations/*{.ts,.js}"],
+	entities: [basePath + "/infrastructure/database/entity/*{.ts,.js}"],
 });
 
 export const EpisodeRepository = AppDataSource.getRepository(EpisodeDAL);
