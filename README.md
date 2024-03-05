@@ -1,6 +1,6 @@
 # Shaman King Episode Bot
 
-This is a Telegram bot that polls a website for new [Shaman King Flowers](https://en.wikipedia.org/wiki/Shaman_King:_Flowers) episodes. 
+This Telegram bot polls a website for new [Shaman King Flowers](https://en.wikipedia.org/wiki/Shaman_King:_Flowers) episodes. 
 
 Every time a new episode is available, it sends a message with the information regarding the episode and its url.
 
@@ -44,21 +44,6 @@ POSTGRES_HOST=localhost
 CRON_PATTERN=0 */6 * * *
 ```
 
-### Step 4 - Run the bot locally with docker DB
-
- Comment the service `shaman-king-bot` so that only the `postgres` and `pgadmin` are uncommented
-
-> `mkdir data`  <-- The folder where the databse volume will be mounted
-
-> `docker-compose build && docker-compose up -d`
-
-> ```npm run dev``` or ``yarn dev``
-
-### Step 4 - Run the bot and DB with docker
-> `mkdir data`  <-- The folder where the databse volume will be mounted
-
-> `docker-compose build && docker-compose up -d`
-
 ## Migrations
 ### Create migration
 
@@ -67,14 +52,33 @@ Create a new entity on src/infrastructure/entity
 ` yarn migrate:generate src/infrastructure/database/migration/<migration name>`
 
 ## Build
-The transpiled files are created inside the dist folder. This name is defined on tsconfig.json file and to renamed it you need to change the compilerOptions.outDir property.
+The transpiled files are created inside the dist folder. This name is defined on tsconfig.json file and to rename it you need to change the compilerOptions.outDir property.
 
 #### Build code
 > ```npm run build``` or ``yarn build``
 
+## Run the bot locally with docker DB
+
+ Comment the service `shaman-king-bot` so that only the `postgres` and `pgadmin` are uncommented
+
+> `mkdir data`  <-- The folder where the database volume will be mounted
+
+> `docker-compose build && docker-compose up -d` or `make start`
+
+> ```npm run dev``` or ``yarn dev``
+
+## Run the bot and DB with docker
+> `mkdir data`  <-- The folder where the database volume will be mounted
+
+> `docker-compose build && docker-compose up -d` or `make start`
+
+## Makefile
+
+This repo has a [Makefile](Makefile) with some useful commands to avoid running long docker commands
+
 ## Docker
 
-The bot was built using Docker so it doesn't depende on external services. It includes a PostgreSQL dabatase and the PgAdmin dashboard so you can manage your data
+The bot was built using Docker so it doesn't depend on external services. It includes a PostgreSQL database and the PgAdmin dashboard so you can manage your data
 In order to do it:
 - Access `localhost:5050` and insert the credentials specified on the `docker-compose.yml`
 
@@ -84,7 +88,7 @@ In order to do it:
 ## Notes
 ### Install docker-compose on an unix system so that it supports docker-compose version: "3.9"
 
-For the docker-compose be able to run, follow these steps https://stackoverflow.com/a/74119920/9661304
+For the docker-compose to be able to run, follow these steps https://stackoverflow.com/a/74119920/9661304
 
 ## License 
 
