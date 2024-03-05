@@ -1,4 +1,4 @@
-import { getLastEpisode, saveEpisode } from "../database/service";
+import { getLastEpisode, insertEpisode } from "../database/service";
 import { Episode } from "../../domain/bot/episode";
 import { getEnvironmentVariable } from "../../utils/getEnvironmentVariable";
 import { Telegram } from "telegraf";
@@ -25,7 +25,7 @@ export const getPollingEpisode = async (): Promise<Episode> => {
 			season: 1,
 		};
 
-		await saveEpisode(lastEpisode);
+		await insertEpisode(lastEpisode);
 	}
 
 	return lastEpisode;

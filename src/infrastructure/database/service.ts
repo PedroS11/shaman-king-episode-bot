@@ -28,9 +28,22 @@ export const getLastEpisode = async (): Promise<Episode> => {
 	};
 };
 
-export const saveEpisode = async (data: Episode): Promise<void> => {
+export const insertEpisode = async (data: Episode): Promise<void> => {
 	const episode = new EpisodeDAL();
 	episode.id = data.id;
+	episode.notified = data.notified;
+	episode.url = data.url;
+	episode.title = data.title;
+	await EpisodeRepository.save(episode);
+};
+
+export const updateEpisode = async (data: Episode): Promise<void> => {
+	const episode = await EpisodeRepository.findOneBy({
+		id: data.id,
+	});
+	if (!episode) {
+		throw new Error(`Episode ${data.id} not found while updating its data`);
+	}
 	episode.notified = data.notified;
 	episode.url = data.url;
 	episode.title = data.title;

@@ -1,8 +1,8 @@
 import { AxiosError } from "axios";
 import { Telegram } from "telegraf";
-import { saveEpisode } from "../database/service";
+import { updateEpisode } from "../database/service";
 import { Episode } from "../../domain/bot/episode";
-import { getLastReleasedEpisode } from "../crawler/helpers";
+import { getLastReleasedEpisode } from "../crawler/streamWebsite";
 import { sendMessage } from "../telegram/helpers";
 import { getBot, getPollingEpisode } from "./helpers";
 import { EpisodeCrawled } from "../../domain/crawler";
@@ -23,7 +23,7 @@ export const pollEpisode = async () => {
 			SHAMAN_KING_FLOWERS_API,
 		);
 
-		Logger.info(lastReleasedEpisode, "Last avaialble episode ");
+		Logger.info(lastReleasedEpisode, "Last available episode ");
 
 		// If the new episode is available
 		if (lastReleasedEpisode.nr === pollingEpisode.id) {
@@ -35,7 +35,7 @@ export const pollEpisode = async () => {
 			pollingEpisode.url = lastReleasedEpisode.url;
 			pollingEpisode.notified = true;
 			pollingEpisode.title = lastReleasedEpisode.title;
-			await saveEpisode(pollingEpisode);
+			await updateEpisode(pollingEpisode);
 		}
 
 		Logger.info(
