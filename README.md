@@ -45,11 +45,18 @@ CRON_PATTERN=0 */6 * * *
 ```
 
 ## Migrations
-### Create migration
+### Create migration based on an entity
 
 Create a new entity on src/infrastructure/entity
 
-` yarn migrate:generate src/infrastructure/database/migration/<migration name>`
+` yarn migrate:generate --migration=MIGRATION_NAME`
+
+
+### Create an empty migration
+
+Create a new entity on src/infrastructure/entity
+
+` yarn migrate:create --migration=MIGRATION_NAME`
 
 ## Build
 The transpiled files are created inside the dist folder. This name is defined on tsconfig.json file and to rename it you need to change the compilerOptions.outDir property.
