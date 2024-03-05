@@ -13,9 +13,9 @@
     "format": "npm run prettier:fix && npm run lint:fix",
     "prepare": "husky install",
     "start": "export NODE_ENV=production && node dist/index.js",
-    "migration:create": "typeorm-ts-node-commonjs migration:create  ",
+    "migration:create": "typeorm-ts-node-commonjs migration:create src/infrastructure/database/migrations/$npm_config_migration",
     "migration:run": "typeorm-ts-node-commonjs migration:run -d src/infrastructure/database/dataSource.ts",
-    "migration:generate": "typeorm-ts-node-commonjs migration:generate -d src/infrastructure/database/dataSource.ts ",
+    "migration:generate": "typeorm-ts-node-commonjs migration:generate -d src/infrastructure/database/dataSource.ts src/infrastructure/database/migrations/$npm_config_migration",
     "migration:revert": "npx typeorm-ts-node-commonjs migration:revert -d ./src/infrastructure/database/dataSource.ts"
   },
   "repository": {
