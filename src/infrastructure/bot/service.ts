@@ -1,4 +1,4 @@
-import { AxiosError } from "axios";
+import axios from "axios";
 import { Telegram } from "telegraf";
 import { updateEpisode } from "../database/service";
 import { Episode } from "../../domain/bot/episode";
@@ -44,16 +44,14 @@ export const pollEpisode = async () => {
 		);
 		Logger.info("-------------------------------------------");
 	} catch (e) {
-		if (e?.response) {
-			const error: AxiosError = e;
-			if (error.response?.status === 404) {
+		if (axios.isAxiosError(e)) {
+			if (e.response?.status === 404) {
 				Logger.error(`Page ${SHAMAN_KING_FLOWERS_API} not found`);
 				return;
 			}
 		}
-		await sendMessage(
-			bot,
-			`Error calling ${SHAMAN_KING_FLOWERS_API}, message ${e.message}`,
-		);
+
+		Logger.error(`Execution error, message ${e.message}`);
+		await sendMessage(bot, `Execution error, message ${e.message}`);
 	}
 };
